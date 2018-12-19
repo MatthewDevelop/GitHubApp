@@ -1,15 +1,18 @@
-import React ,{ Component }from 'react';
+import React, { Component } from 'react';
 import { View } from 'react-native';
 import styles from '../utils/Styles';
+import NavigationBar from '../common/NavigationBar'
 
 class Trending extends Component {
     render() {
         return (
-            <View style={styles.pageTrending}></View>
+            <View style={styles.pageTrending}>
+                <NavigationBar
+                    title='Trending'
+                    style={{
+                        backgroundColor: 'red',
+                    }}/></View>
         );
     }
 }
-
-
-
 export default Trending;
