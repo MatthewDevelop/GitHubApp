@@ -13,12 +13,13 @@ import Hot from './js/page/Hot';
 import Trending from './js/page/Trending';
 import Collect from './js/page/Collect';
 import UserProfile from './js/page/UserProfile';
+import FetchTest from './js/test/FetchTest';
 
 
 
 const tabNavigator = createBottomTabNavigator({
   HotPage: {
-    screen: Hot,
+    screen: FetchTest,
     navigationOptions: {
       tabBarLabel: '热门',
     }
