@@ -15,7 +15,7 @@ class Hot extends Component {
         return (
             <View style={styles.pageHot}>
                 <NavigationBar
-                    title='Hot'
+                    title='热门'
                     style={{
                         backgroundColor: 'lightgreen',
                     }}
@@ -45,6 +45,7 @@ class HotTab extends Component {
         this.state = {
             result: [],
             loaded: false,
+            isRefresh: false,
         }
     }
 
@@ -53,6 +54,9 @@ class HotTab extends Component {
     }
 
     fetchData(key) {
+        this.setState({
+            isRefresh: true
+        })
         let url = URL + key + QUERY_STR;
         this.dataRepository.fetchNetRepository(url)
             .then(result => {
@@ -60,6 +64,7 @@ class HotTab extends Component {
                 this.setState({
                     loaded: true,
                     result: result.items,
+                    isRefresh: false
                 });
             })
             .catch(error => {
@@ -76,6 +81,13 @@ class HotTab extends Component {
         );
     }
 
+    onRefresh() {
+        if (!this.state.isRefresh) {
+            this.fetchData(this.props.tabLabel);
+        }
+    }
+    
+
     render() {
 
         if (!this.state.loaded) {
@@ -91,6 +103,11 @@ class HotTab extends Component {
                     data={this.state.result}
                     renderItem={({ item }) => this.renderItem(item)}
                     keyExtractor={(item, index) => index.toString()}
+                    refreshing={this.state.isRefresh}
+                    onRefresh={() => this.onRefresh()}
+                    // ListEmptyComponent={() => this.createEmptyComponent()}
+                    // ListHeaderComponent={() => this.createHeaderComponent()}
+                    // ListFooterComponent={() => this.createFooterComponent()}
                 />
             </View>
         );
