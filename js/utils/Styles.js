@@ -3,7 +3,6 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
     pageHot: {
         flex: 1,
-        backgroundColor: "lightgray"
     },
     pageTrending: {
         flex: 1,

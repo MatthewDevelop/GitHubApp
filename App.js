@@ -6,20 +6,19 @@
  * @flow
  */
 
-import React, { Component } from 'react';
+import React from 'react';
 import { createBottomTabNavigator, createAppContainer } from 'react-navigation';
 import Icon from './js/common/IconFont';
 import Hot from './js/page/Hot';
 import Trending from './js/page/Trending';
 import Collect from './js/page/Collect';
 import UserProfile from './js/page/UserProfile';
-import FetchTest from './js/test/FetchTest';
 
 
 
 const tabNavigator = createBottomTabNavigator({
   HotPage: {
-    screen: FetchTest,
+    screen: Hot,
     navigationOptions: {
       tabBarLabel: '热门',
     }
