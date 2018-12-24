@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -23,7 +24,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
-		15556F5221CE0C1E000EAF6F /* iconfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 15556F5121CE0C1E000EAF6F /* iconfont.ttf */; };
+		15081B7221D0BE3B007F2D9D /* iconfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 15081B7121D0BE3B007F2D9D /* iconfont.ttf */; };
 		2B620009ADB34118962C1D5D /* libRNGestureHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C412A6772C448D39B7D96A9 /* libRNGestureHandler.a */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -377,7 +378,7 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = GitHubApp/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = GitHubApp/main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
-		15556F5121CE0C1E000EAF6F /* iconfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = iconfont.ttf; path = ../../../android/app/src/main/assets/fonts/iconfont.ttf; sourceTree = "<group>"; };
+		15081B7121D0BE3B007F2D9D /* iconfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = iconfont.ttf; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* GitHubApp-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GitHubApp-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* GitHubApp-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "GitHubApp-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -582,7 +583,7 @@
 		15556F2821CE0BFA000EAF6F /* fonts */ = {
 			isa = PBXGroup;
 			children = (
-				15556F5121CE0C1E000EAF6F /* iconfont.ttf */,
+				15081B7121D0BE3B007F2D9D /* iconfont.ttf */,
 			);
 			name = fonts;
 			path = GitHubApp/fonts;
@@ -1204,7 +1205,7 @@
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
-				15556F5221CE0C1E000EAF6F /* iconfont.ttf in Resources */,
+				15081B7221D0BE3B007F2D9D /* iconfont.ttf in Resources */,
 				489565C62EDC4CC4A52C9CEA /* AntDesign.ttf in Resources */,
 				48648F6629624199846CB4E3 /* Entypo.ttf in Resources */,
 				672CAE4011A84B6EAE3EE78E /* EvilIcons.ttf in Resources */,
