@@ -18,6 +18,7 @@ import Trending from './js/page/Trending';
 import Collect from './js/page/Collect';
 import UserProfile from './js/page/UserProfile';
 import CustomTagPage from './js/page/CustomTagPage';
+import {ThemeColor} from './js/utils/Consts';
 
 
 
@@ -66,7 +67,7 @@ const tabNavigator = createBottomTabNavigator({
       },
     }),
     tabBarOptions: {
-      activeTintColor: 'lightgreen',
+      activeTintColor: ThemeColor,
       inactiveTintColor: 'gray',
     },
   })

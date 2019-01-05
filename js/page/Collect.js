@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 import styles from '../utils/Styles';
 import NavigationBar from '../common/NavigationBar';
+import {ThemeColor} from '../utils/Consts';
 
 class Collect extends Component {
     render() {
@@ -10,10 +11,10 @@ class Collect extends Component {
                 <NavigationBar
                     title='Collect'
                     style={{
-                        backgroundColor: 'lightgreen',
+                        backgroundColor: ThemeColor,
                     }}
                     statusBar={{
-                        backgroundColor: 'lightgreen'
+                        backgroundColor: ThemeColor,
                     }} />
             </View>
         );

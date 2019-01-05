@@ -21,7 +21,7 @@ export default class RepositoryItem extends Component {
                 <View style={styles.itemContainer}>
                     <Text style={styles.title}>{data.full_name}</Text>
                     <Text style={styles.description}>{data.description}</Text>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between',alignItems:'center' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Text>Author: </Text>
                             <Image source={{ uri: data.owner.avatar_url }} style={{ width: 22, height: 22 }} />
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     },
     itemContainer: {
         backgroundColor: 'white',
-        padding: 10,
+        padding: 5,
         marginLeft: 5,
         marginRight: 5,
         marginBottom: 5,

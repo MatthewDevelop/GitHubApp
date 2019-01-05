@@ -6,6 +6,7 @@ import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab
 import DataRepository from '../expand/dao/DataRepository';
 import RepositoryItem from '../common/RepositoryItem';
 import Loading from '../common/Loading';
+import {ThemeColor} from '../utils/Consts';
 
 const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY_STR = '&sort=stars';
@@ -17,14 +18,14 @@ class Hot extends Component {
                 <NavigationBar
                     title='热门'
                     style={{
-                        backgroundColor: 'lightgreen',
+                        backgroundColor: ThemeColor,
                     }}
                     statusBar={{
-                        backgroundColor: 'lightgreen'
+                        backgroundColor: ThemeColor
                     }} />
 
                 <ScrollableTabView
-                    tabBarBackgroundColor='lightgreen'
+                    tabBarBackgroundColor={ThemeColor}
                     renderTabBar={() => <ScrollableTabBar />}>
                     <HotTab tabLabel='Java'>Java</HotTab>
                     <HotTab tabLabel='JavaScript'>JavaScript</HotTab>

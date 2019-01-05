@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
 import styles from '../utils/Styles';
-import NavigationBar from '../common/NavigationBar'
+import NavigationBar from '../common/NavigationBar';
+import {ThemeColor} from '../utils/Consts';
 
 class Trending extends Component {
     render() {
@@ -10,10 +11,10 @@ class Trending extends Component {
                 <NavigationBar
                     title='Trending'
                     style={{
-                        backgroundColor: 'lightgreen',
+                        backgroundColor: ThemeColor,
                     }}
                     statusBar={{
-                        backgroundColor: 'lightgreen'
+                        backgroundColor: ThemeColor
                     }} />
             </View>
         );
