@@ -7,18 +7,23 @@
  */
 
 import React from 'react';
-import { createBottomTabNavigator, createAppContainer } from 'react-navigation';
+import {
+  createBottomTabNavigator,
+  createAppContainer,
+  createStackNavigator,
+} from 'react-navigation';
 import Icon from './js/common/IconFont';
 import Hot from './js/page/Hot';
 import Trending from './js/page/Trending';
 import Collect from './js/page/Collect';
 import UserProfile from './js/page/UserProfile';
+import CustomTagPage from './js/page/CustomTagPage';
 
 
 
 const tabNavigator = createBottomTabNavigator({
   HotPage: {
-    screen: Hot,
+    screen: UserProfile,
     navigationOptions: {
       tabBarLabel: '热门',
     }
@@ -36,7 +41,7 @@ const tabNavigator = createBottomTabNavigator({
     }
   },
   UserPage: {
-    screen: UserProfile,
+    screen: Hot,
     navigationOptions: {
       tabBarLabel: '我的',
     }
@@ -66,6 +71,20 @@ const tabNavigator = createBottomTabNavigator({
     },
   })
 
-export default createAppContainer(tabNavigator);
+const stackNavigator = createStackNavigator(
+  {
+    tab: {
+      screen: tabNavigator,
+      navigationOptions: {
+        header: null
+      }
+    },
+    tagPage: {
+      screen: CustomTagPage,
+    },
+  }
+);
+
+export default createAppContainer(stackNavigator);
 
 

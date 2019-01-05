@@ -6,15 +6,12 @@ const styles = StyleSheet.create({
     },
     pageTrending: {
         flex: 1,
-        backgroundColor: "lightgray"
     },
     pageCollect: {
         flex: 1,
-        backgroundColor: "red"
     },
     pageUserProfile: {
         flex: 1,
-        backgroundColor: "blue"
     }
 });
 

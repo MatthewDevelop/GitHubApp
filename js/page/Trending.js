@@ -10,8 +10,12 @@ class Trending extends Component {
                 <NavigationBar
                     title='Trending'
                     style={{
-                        backgroundColor: 'red',
-                    }}/></View>
+                        backgroundColor: 'lightgreen',
+                    }}
+                    statusBar={{
+                        backgroundColor: 'lightgreen'
+                    }} />
+            </View>
         );
     }
 }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, ActivityIndicator } from 'react-native';
+import { View, FlatList } from 'react-native';
 import styles from '../utils/Styles';
 import NavigationBar from '../common/NavigationBar';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
@@ -86,7 +86,7 @@ class HotTab extends Component {
             this.fetchData(this.props.tabLabel);
         }
     }
-    
+
 
     render() {
 
@@ -105,9 +105,9 @@ class HotTab extends Component {
                     keyExtractor={(item, index) => index.toString()}
                     refreshing={this.state.isRefresh}
                     onRefresh={() => this.onRefresh()}
-                    // ListEmptyComponent={() => this.createEmptyComponent()}
-                    // ListHeaderComponent={() => this.createHeaderComponent()}
-                    // ListFooterComponent={() => this.createFooterComponent()}
+                // ListEmptyComponent={() => this.createEmptyComponent()}
+                // ListHeaderComponent={() => this.createHeaderComponent()}
+                // ListFooterComponent={() => this.createFooterComponent()}
                 />
             </View>
         );
