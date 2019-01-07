@@ -18,13 +18,15 @@ import Trending from './js/page/Trending';
 import Collect from './js/page/Collect';
 import UserProfile from './js/page/UserProfile';
 import CustomTagPage from './js/page/CustomTagPage';
-import {ThemeColor} from './js/utils/Consts';
+import { ThemeColor } from './js/utils/Consts';
+
+
 
 
 
 const tabNavigator = createBottomTabNavigator({
   HotPage: {
-    screen: UserProfile,
+    screen: Hot,
     navigationOptions: {
       tabBarLabel: '热门',
     }
@@ -42,7 +44,7 @@ const tabNavigator = createBottomTabNavigator({
     }
   },
   UserPage: {
-    screen: Hot,
+    screen: UserProfile,
     navigationOptions: {
       tabBarLabel: '我的',
     }
@@ -72,12 +74,37 @@ const tabNavigator = createBottomTabNavigator({
     },
   })
 
+tabNavigator.navigationOptions = ({ navigation }) => {
+  const { index } = navigation.state;
+  const { routeName } = navigation.state.routes[index];
+  headerTitle = '';
+
+  switch (routeName) {
+    case 'HotPage':
+      headerTitle = '热门';
+      break;
+    case 'TrendingPage':
+      headerTitle = '趋势';
+      break;
+    case 'CollectPage':
+      headerTitle = '收藏';
+      break;
+    case 'UserPage':
+      headerTitle = '我的';
+      break;
+    default:
+      break
+  }
+  return {
+    headerTitle,
+  }
+}
 const stackNavigator = createStackNavigator(
   {
     tab: {
       screen: tabNavigator,
-      navigationOptions: {
-        header: null
+      navigationOptions:{
+        header:null
       }
     },
     tagPage: {

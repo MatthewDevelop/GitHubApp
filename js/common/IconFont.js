@@ -5,6 +5,9 @@ const glyphMap = {
     'icon_collect': 58928,
     'icon_hot':59222,
     'icon_trending':60788,
+    'icon_checked':59127,
+    'icon_unchecked':58905,
+    'icon_back':58903,
 }
 
 //映射表，fontFamily，字体文件

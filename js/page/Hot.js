@@ -6,13 +6,49 @@ import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab
 import DataRepository from '../expand/dao/DataRepository';
 import RepositoryItem from '../common/RepositoryItem';
 import Loading from '../common/Loading';
-import {ThemeColor} from '../utils/Consts';
+import { ThemeColor } from '../utils/Consts';
+import LanguageDao, { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
+
 
 const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY_STR = '&sort=stars';
 
 class Hot extends Component {
+
+    constructor(props) {
+        super(props);
+        this.languageDao = new LanguageDao(FLAG_LANGUAGE.flag_language_key);
+        this.state = {
+            language: [],
+        };
+    }
+
+    componentDidMount() {
+        this.loadData();
+    }
+
+    loadData() {
+        this.languageDao.fetch()
+            .then(result => {
+                this.setState({
+                    language: result,
+                });
+            })
+            .catch(error => {
+                console.log(error);
+            })
+    }
+
     render() {
+        let content = this.state.language.length > 0 ?
+            <ScrollableTabView
+                tabBarBackgroundColor={ThemeColor}
+                renderTabBar={() => <ScrollableTabBar />}>
+                {this.state.language.map((result, i, arr) => {
+                    let item = arr[i];
+                    return item.checked ? <HotTab key={i} tabLabel={item.name} path={item.path}/> : null;
+                })}
+            </ScrollableTabView> : null;
         return (
             <View style={styles.pageHot}>
                 <NavigationBar
@@ -23,15 +59,7 @@ class Hot extends Component {
                     statusBar={{
                         backgroundColor: ThemeColor
                     }} />
-
-                <ScrollableTabView
-                    tabBarBackgroundColor={ThemeColor}
-                    renderTabBar={() => <ScrollableTabBar />}>
-                    <HotTab tabLabel='Java'>Java</HotTab>
-                    <HotTab tabLabel='JavaScript'>JavaScript</HotTab>
-                    <HotTab tabLabel='IOS'>IOS</HotTab>
-                    <HotTab tabLabel='Android'>Android</HotTab>
-                </ScrollableTabView>
+                {content}
             </View>
         );
     }
@@ -51,7 +79,7 @@ class HotTab extends Component {
     }
 
     componentDidMount() {
-        this.fetchData(this.props.tabLabel);
+        this.fetchData(this.props.path);
     }
 
     fetchData(key) {
@@ -84,7 +112,7 @@ class HotTab extends Component {
 
     onRefresh() {
         if (!this.state.isRefresh) {
-            this.fetchData(this.props.tabLabel);
+            this.fetchData(this.props.path);
         }
     }
 
