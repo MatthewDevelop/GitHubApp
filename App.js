@@ -18,6 +18,7 @@ import Trending from './js/page/Trending';
 import Collect from './js/page/Collect';
 import UserProfile from './js/page/UserProfile';
 import CustomTagPage from './js/page/CustomTagPage';
+import SortKeyPage from './js/page/SortKeyPage';
 import { ThemeColor } from './js/utils/Consts';
 
 
@@ -103,12 +104,15 @@ const stackNavigator = createStackNavigator(
   {
     tab: {
       screen: tabNavigator,
-      navigationOptions:{
-        header:null
+      navigationOptions: {
+        header: null
       }
     },
     tagPage: {
       screen: CustomTagPage,
+    },
+    tagSortPage: {
+      screen: SortKeyPage,
     },
   }
 );

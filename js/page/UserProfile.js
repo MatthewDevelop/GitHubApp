@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Button } from 'react-native';
 import styles from '../utils/Styles';
 import NavigationBar from '../common/NavigationBar';
-import {ThemeColor} from '../utils/Consts';
+import { ThemeColor } from '../utils/Consts';
 
 class UserProfile extends Component {
 
@@ -14,6 +14,10 @@ class UserProfile extends Component {
 
     toCustomTagPage() {
         this.navigation.push('tagPage');
+    }
+
+    toTagSortPage() {
+        this.navigation.push('tagSortPage');
     }
 
     render() {
@@ -29,6 +33,9 @@ class UserProfile extends Component {
                     }} />
                 <View style={{ margin: 10 }}>
                     <Button title='自定义标签' onPress={() => this.toCustomTagPage()} />
+                </View>
+                <View style={{ margin: 10 }}>
+                    <Button title='标签排序' onPress={() => this.toTagSortPage()} />
                 </View>
             </View>
         );

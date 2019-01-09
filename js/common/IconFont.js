@@ -8,6 +8,7 @@ const glyphMap = {
     'icon_checked':59127,
     'icon_unchecked':58905,
     'icon_back':58903,
+    'icon_sort':60417,
 }
 
 //映射表，fontFamily，字体文件
