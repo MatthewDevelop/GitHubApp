@@ -89,7 +89,6 @@ class HotTab extends Component {
         let url = URL + key + QUERY_STR;
         this.dataRepository.fetchNetRepository(url)
             .then(result => {
-                console.log(result);
                 this.setState({
                     loaded: true,
                     result: result.items,
@@ -104,7 +103,6 @@ class HotTab extends Component {
     }
 
     renderItem(item) {
-        console.log(item)
         return (
             <RepositoryItem data={item} />
         );

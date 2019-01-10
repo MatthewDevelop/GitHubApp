@@ -20,6 +20,12 @@ class UserProfile extends Component {
         this.navigation.push('tagSortPage');
     }
 
+    toTagRemovePage() {
+        this.navigation.push('tagPage', {
+            isRemoveKey: true,
+        });
+    }
+
     render() {
         return (
             <View style={styles.pageUserProfile}>
@@ -36,6 +42,9 @@ class UserProfile extends Component {
                 </View>
                 <View style={{ margin: 10 }}>
                     <Button title='标签排序' onPress={() => this.toTagSortPage()} />
+                </View>
+                <View style={{ margin: 10 }}>
+                    <Button title='移除标签' onPress={() => this.toTagRemovePage()} />
                 </View>
             </View>
         );

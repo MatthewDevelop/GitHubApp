@@ -12,22 +12,43 @@ class CustomTagPage extends Component {
     constructor(props) {
         super(props);
         this.navigation = this.props.navigation;
+        this.isRemoveKey = this.navigation.getParam('isRemoveKey', false);
         this.languageDao = new LanguageDao(FLAG_LANGUAGE.flag_language_key);
         this.changedValues = [];
+        this.originDataArray = [];
         this.state = {
             dataArray: [],
         }
     }
-
+    /**
+     * 保存
+     */
     save = () => {
         if (this.changedValues.length === 0) {
             this.props.navigation.pop();
             return;
         }
-        this.languageDao.save(this.state.dataArray);
-        this.props.navigation.pop();
+        if (this.isRemoveKey) {
+            //移除重复元素
+            this.changedValues.map(item => {
+                for (let i = 0; i < this.originDataArray.length; i++) {
+                    if (item.name === this.originDataArray[i].name) {
+                        //删除元素
+                        this.originDataArray.splice(i, 1)
+                        i = i - 1;
+                    };
+                }
+            });
+            this.languageDao.save(this.originDataArray);
+            this.props.navigation.pop();
+        } else {
+            this.languageDao.save(this.state.dataArray);
+            this.props.navigation.pop();
+        }
     }
-
+    /**
+     * 返回
+     */
     back = () => {
         if (this.changedValues.length === 0) {
             this.props.navigation.pop();
@@ -45,8 +66,10 @@ class CustomTagPage extends Component {
     }
 
     static navigationOptions = ({ navigation }) => {
+        let title = navigation.getParam('isRemoveKey') ? '移除标签' : '自定义标签';
+        let rightText = navigation.getParam('isRemoveKey') ? '移除' : '保存';
         return ({
-            headerTitle: '自定义标签',
+            headerTitle: title,
             headerStyle: {
                 backgroundColor: ThemeColor,
             },
@@ -59,7 +82,7 @@ class CustomTagPage extends Component {
                     marginRight: 5,
                 }}
                 onPress={navigation.getParam('save')}
-            >保存</Text>,
+            >{rightText}</Text>,
             headerLeft: <IconFont
                 style={{
                     marginLeft: 10,
@@ -75,6 +98,13 @@ class CustomTagPage extends Component {
     loadData() {
         this.languageDao.fetch()
             .then(result => {
+                if (this.isRemoveKey) {
+                    this.originDataArray = ArrayUtil.deepCopy(result);
+                    result.map((item) => {
+                        item.checked = false;
+                        return item;
+                    })
+                }
                 this.setState({
                     dataArray: result,
                 });
@@ -89,6 +119,7 @@ class CustomTagPage extends Component {
         this.navigation.setParams({
             save: this.save,
             back: this.back,
+            isRemoveKey: this.isRemoveKey,
         })
     }
 
@@ -104,9 +135,10 @@ class CustomTagPage extends Component {
 
     renderCheckBox(data) {
         let leftText = data.name;
+        let isChecked = data.checked;
         return (
             <CheckBox
-                isChecked={data.checked}
+                isChecked={isChecked}
                 style={{ flex: 1, padding: 6 }}
                 onClick={() => this.onClick(data)}
                 leftText={leftText}
