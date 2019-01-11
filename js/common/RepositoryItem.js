@@ -17,11 +17,11 @@ export default class RepositoryItem extends Component {
     render() {
         const { data } = this.props;
         return (
-            <TouchableOpacity style={styles.container}>
+            <TouchableOpacity style={styles.container} onPress={this.props.onSelect}>
                 <View style={styles.itemContainer}>
                     <Text style={styles.title}>{data.full_name}</Text>
                     <Text style={styles.description}>{data.description}</Text>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between',alignItems:'center' }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Text>Author: </Text>
                             <Image source={{ uri: data.owner.avatar_url }} style={{ width: 22, height: 22 }} />

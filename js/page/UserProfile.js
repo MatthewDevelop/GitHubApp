@@ -13,15 +13,15 @@ class UserProfile extends Component {
 
 
     toCustomTagPage() {
-        this.navigation.push('tagPage');
+        this.navigation.navigate('tagPage');
     }
 
     toTagSortPage() {
-        this.navigation.push('tagSortPage');
+        this.navigation.navigate('tagSortPage');
     }
 
     toTagRemovePage() {
-        this.navigation.push('tagPage', {
+        this.navigation.navigate('tagPage', {
             isRemoveKey: true,
         });
     }

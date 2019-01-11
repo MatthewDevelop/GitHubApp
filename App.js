@@ -19,6 +19,8 @@ import Collect from './js/page/Collect';
 import UserProfile from './js/page/UserProfile';
 import CustomTagPage from './js/page/CustomTagPage';
 import SortKeyPage from './js/page/SortKeyPage';
+import RepositoryDetailPage from './js/page/RepositoryDetailPage';
+// import WebViewTest from './js/test/WebViewTest';
 import { ThemeColor } from './js/utils/Consts';
 
 
@@ -114,6 +116,9 @@ const stackNavigator = createStackNavigator(
     tagSortPage: {
       screen: SortKeyPage,
     },
+    repoDetailPage: {
+      screen: RepositoryDetailPage,
+    }
   }
 );
 

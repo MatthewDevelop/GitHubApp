@@ -47,7 +47,7 @@ class Hot extends Component {
                 renderTabBar={() => <ScrollableTabBar />}>
                 {this.state.language.map((result, i, arr) => {
                     let item = arr[i];
-                    return item.checked ? <HotTab key={i} tabLabel={item.name} path={item.path} /> : null;
+                    return item.checked ? <HotTab key={i} tabLabel={item.name} path={item.path} {...this.props} /> : null;
                 })}
             </ScrollableTabView> : null;
         return (
@@ -106,7 +106,7 @@ class HotTab extends Component {
                         isRefresh: true
                     });
                     return this.dataRepository.fetchNetRepository(url);
-                }else{
+                } else {
                     ToastUtil.show('缓存数据');
                 }
             })
@@ -128,8 +128,14 @@ class HotTab extends Component {
 
     renderItem(item) {
         return (
-            <RepositoryItem data={item} />
+            <RepositoryItem data={item} onSelect={() => this.onSelect(item)} />
         );
+    }
+
+    onSelect(item) {
+        this.props.navigation.navigate('repoDetailPage', {
+            item: item,
+        });
     }
 
     onRefresh() {
