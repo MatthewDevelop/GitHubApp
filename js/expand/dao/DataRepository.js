@@ -86,7 +86,7 @@ export default class DataRepository {
     saveRepository(url, items, callback) {
         if (!url || !items) return;
         //将数据包装添加时间戳
-        let wrapData = { items: items, update_date: new Date().getTime()};
+        let wrapData = { items: items, update_date: new Date().getTime() };
         // console.log(wrapData);
         AsyncStorage.setItem(url, JSON.stringify(wrapData), callback);
     }
@@ -101,7 +101,12 @@ export default class DataRepository {
         let currentDate = new Date();
         //保存时间
         let saveDate = new Date();
-        saveDate.setDate(longTime);
+        saveDate.setTime(longTime);
+        // console.log(currentDate.getMonth() !== saveDate.getMonth());
+        // console.log(currentDate.getDay() !== saveDate.getDay());
+        // console.log(currentDate.getHours());
+        // console.log(saveDate.getHours());
+        // console.log(currentDate.getHours() - saveDate.getHours());
         if (currentDate.getMonth() !== saveDate.getMonth()) return false;
         if (currentDate.getDay() !== saveDate.getDay()) return false;
         if (currentDate.getHours() - saveDate.getHours() > 4) return false;
