@@ -8,6 +8,7 @@ import RepositoryItem from '../common/RepositoryItem';
 import Loading from '../common/Loading';
 import { ThemeColor } from '../utils/Consts';
 import LanguageDao, { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
+import ToastUtil from '../utils/ToastUtil';
 
 
 const URL = 'https://api.github.com/search/repositories?q=';
@@ -46,7 +47,7 @@ class Hot extends Component {
                 renderTabBar={() => <ScrollableTabBar />}>
                 {this.state.language.map((result, i, arr) => {
                     let item = arr[i];
-                    return item.checked ? <HotTab key={i} tabLabel={item.name} path={item.path}/> : null;
+                    return item.checked ? <HotTab key={i} tabLabel={item.name} path={item.path} /> : null;
                 })}
             </ScrollableTabView> : null;
         return (
@@ -87,11 +88,34 @@ class HotTab extends Component {
             isRefresh: true
         })
         let url = URL + key + QUERY_STR;
-        this.dataRepository.fetchNetRepository(url)
+        this.dataRepository.fetchRepository(url)
             .then(result => {
+                let items = result && result.items ? result.items : result ? result : [];
+                //首先将数据关联到组件
                 this.setState({
                     loaded: true,
-                    result: result.items,
+                    result: items,
+                    isRefresh: false
+                });
+                //再判断数据是否过期
+                // console.log(result);
+                // console.log(result.update_date);
+                if (result && result.update_date && !this.dataRepository.checkDate(result.update_date)) {
+                    ToastUtil.show('数据过期');
+                    this.setState({
+                        isRefresh: true
+                    });
+                    return this.dataRepository.fetchNetRepository(url);
+                }else{
+                    ToastUtil.show('缓存数据');
+                }
+            })
+            .then(items => {
+                // console.log(items);
+                if (!items || items.length === 0) return;
+                ToastUtil.show('网络数据');
+                this.setState({
+                    result: items,
                     isRefresh: false
                 });
             })
