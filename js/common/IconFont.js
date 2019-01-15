@@ -9,6 +9,7 @@ const glyphMap = {
     'icon_unchecked':58905,
     'icon_back':58903,
     'icon_sort':60417,
+    'icon_down_trangle':58887,
 }
 
 //映射表，fontFamily，字体文件

@@ -1,17 +1,24 @@
 import React, { Component } from 'react';
-import { View, FlatList } from 'react-native';
+import { View, FlatList, TouchableOpacity, Text } from 'react-native';
 import styles from '../utils/Styles';
 import NavigationBar from '../common/NavigationBar';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
 import DataRepository, { FLAG_SOTRAGE } from '../expand/dao/DataRepository';
 import Loading from '../common/Loading';
+import IconFont from '../common/IconFont';
 import { ThemeColor } from '../utils/Consts';
 import LanguageDao, { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
-import ToastUtil from '../utils/ToastUtil';
 import TrendingItem from '../common/TrendingItem';
+import TimeSpan from '../model/TimeSpan';
+import Popover from '../common/Popover';
+import { white } from 'ansi-colors';
 
 
 const URL = 'https://github.com/trending';
+const timeSpanTextArray = [
+    new TimeSpan('今 天', 'since=daily'),
+    new TimeSpan('本 周', 'since=weekly'),
+    new TimeSpan('本 月', 'since=monthly')]
 
 class Trending extends Component {
 
@@ -20,6 +27,9 @@ class Trending extends Component {
         this.languageDao = new LanguageDao(FLAG_LANGUAGE.flag_language);
         this.state = {
             language: [],
+            isVisible: false,
+            buttonRect: {},
+            timeSpan: timeSpanTextArray[0],
         };
     }
 
@@ -39,6 +49,46 @@ class Trending extends Component {
             })
     }
 
+    showPopover() {
+        this.refs.button.measure((ox, oy, width, height, px, py) => {
+            this.setState({
+                isVisible: true,
+                buttonRect: { x: px, y: py, width: width, height: height }
+            });
+        });
+    }
+
+    closePopover() {
+        this.setState({
+            isVisible: false,
+        });
+    }
+
+    onSelect(timeSpan) {
+        this.closePopover();
+        this.setState({
+            timeSpan: timeSpan,
+        });
+    }
+
+
+
+    renderTitleView() {
+        return <View>
+            <TouchableOpacity ref='button' onPress={() => this.showPopover()}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{
+                        fontSize: 20,
+                        color: 'rgba(0,0,0,0.8)',
+                        marginRight: 8
+                    }}>{`趋势 ${this.state.timeSpan.showText}`}</Text>
+                    <IconFont name='icon_down_trangle' size={16} color='black' />
+                </View>
+            </TouchableOpacity>
+        </View>;
+    }
+
+
     render() {
         let content = this.state.language.length > 0 ?
             <ScrollableTabView
@@ -46,13 +96,30 @@ class Trending extends Component {
                 renderTabBar={() => <ScrollableTabBar />}>
                 {this.state.language.map((result, i, arr) => {
                     let item = arr[i];
-                    return item.checked ? <TrendingTab key={i} tabLabel={item.name} path={item.path} {...this.props} /> : null;
+                    return item.checked ? <TrendingTab key={i}
+                        tabLabel={item.name}
+                        path={item.path}
+                        timeSpan={this.state.timeSpan}
+                        {...this.props} /> : null;
                 })}
             </ScrollableTabView> : null;
+        let timeSpanView =
+            <Popover
+                isVisible={this.state.isVisible}
+                fromRect={this.state.buttonRect}
+                onClose={() => this.closePopover()}
+                placement='bottom'
+                contentStyle={{ backgroundColor: 'white' }}>
+                {timeSpanTextArray.map((result, index, arr) => {
+                    return <TouchableOpacity key={index} onPress={() => { this.onSelect(arr[index]) }}>
+                        <Text style={{ fontSize: 18, color: 'black', fontWeight: '400', padding: 6 }}>{arr[index].showText}</Text>
+                    </TouchableOpacity>;
+                })}
+            </Popover>;
         return (
             <View style={styles.pageHot}>
                 <NavigationBar
-                    title='趋势'
+                    titleView={this.renderTitleView()}
                     style={{
                         backgroundColor: ThemeColor,
                     }}
@@ -60,6 +127,7 @@ class Trending extends Component {
                         backgroundColor: ThemeColor
                     }} />
                 {content}
+                {timeSpanView}
             </View>
         );
     }
@@ -79,14 +147,21 @@ class TrendingTab extends Component {
     }
 
     componentDidMount() {
-        this.fetchData('?since=daily', this.props.path);
+        this.fetchData(this.props.timeSpan, this.props.path, true);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.timeSpan !== this.props.timeSpan) {
+            this.fetchData(nextProps.timeSpan, this.props.path);
+        }
     }
 
     fetchData(timeSpan, category) {
         this.setState({
             isRefresh: true
         })
-        let url = URL + (category === '' ? category : `/${category}`) + timeSpan;
+        let url = URL + (category === '' ? category : `/${category}`)
+            + `?${timeSpan.searchText}`;
         this.dataRepository.fetchRepository(url)
             .then(result => {
                 let items = result && result.items ? result.items : result ? result : [];
@@ -139,7 +214,7 @@ class TrendingTab extends Component {
 
     onRefresh() {
         if (!this.state.isRefresh) {
-            this.fetchData('?since=daily', this.props.path);
+            this.fetchData(this.props.timeSpan, this.props.path);
         }
     }
 

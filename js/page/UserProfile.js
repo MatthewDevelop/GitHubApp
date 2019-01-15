@@ -3,6 +3,7 @@ import { View, Button } from 'react-native';
 import styles from '../utils/Styles';
 import NavigationBar from '../common/NavigationBar';
 import { ThemeColor } from '../utils/Consts';
+import { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
 
 class UserProfile extends Component {
 
@@ -13,7 +14,15 @@ class UserProfile extends Component {
 
 
     toCustomTagPage() {
-        this.navigation.navigate('tagPage');
+        this.navigation.navigate('tagPage', {
+            flag: FLAG_LANGUAGE.flag_key,
+        });
+    }
+
+    toCustomLanguagePage() {
+        this.navigation.navigate('tagPage', {
+            flag: FLAG_LANGUAGE.flag_language,
+        });
     }
 
     toTagSortPage() {
@@ -39,6 +48,9 @@ class UserProfile extends Component {
                     }} />
                 <View style={{ margin: 10 }}>
                     <Button title='自定义标签' onPress={() => this.toCustomTagPage()} />
+                </View>
+                <View style={{ margin: 10 }}>
+                    <Button title='自定义语言' onPress={() => this.toCustomLanguagePage()} />
                 </View>
                 <View style={{ margin: 10 }}>
                     <Button title='标签排序' onPress={() => this.toTagSortPage()} />

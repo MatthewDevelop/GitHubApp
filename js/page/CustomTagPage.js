@@ -13,7 +13,9 @@ class CustomTagPage extends Component {
         super(props);
         this.navigation = this.props.navigation;
         this.isRemoveKey = this.navigation.getParam('isRemoveKey', false);
-        this.languageDao = new LanguageDao(FLAG_LANGUAGE.flag_language_key);
+        this.flag=this.navigation.getParam('flag',FLAG_LANGUAGE.flag_key);
+        console.log(this.flag);
+        this.languageDao = new LanguageDao(this.flag);
         this.changedValues = [];
         this.originDataArray = [];
         this.state = {
