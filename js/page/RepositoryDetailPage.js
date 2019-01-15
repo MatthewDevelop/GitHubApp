@@ -5,7 +5,7 @@ import { ThemeColor } from '../utils/Consts';
 import IconFont from '../common/IconFont';
 
 
-const URL = 'https://www.baidu.com';
+const TRENDING_URL = 'https://github.com';
 class RepositoryDetailPage extends Component {
 
     static navigationOptions = ({ navigation }) => {
@@ -39,8 +39,8 @@ class RepositoryDetailPage extends Component {
     constructor(props) {
         super(props);
         this.item = this.props.navigation.getParam('item');
-        let title = this.item.full_name;
-        this.url = this.item.html_url;
+        let title = this.item.full_name ? this.item.full_name : this.item.fullName;
+        this.url = this.item.html_url ? this.item.html_url : TRENDING_URL + this.item.url;
         this.state = {
             url: this.url,
             canGoBack: false,

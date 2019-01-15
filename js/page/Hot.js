@@ -3,7 +3,7 @@ import { View, FlatList } from 'react-native';
 import styles from '../utils/Styles';
 import NavigationBar from '../common/NavigationBar';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
-import DataRepository from '../expand/dao/DataRepository';
+import DataRepository, { FLAG_SOTRAGE } from '../expand/dao/DataRepository';
 import RepositoryItem from '../common/RepositoryItem';
 import Loading from '../common/Loading';
 import { ThemeColor } from '../utils/Consts';
@@ -18,7 +18,7 @@ class Hot extends Component {
 
     constructor(props) {
         super(props);
-        this.languageDao = new LanguageDao(FLAG_LANGUAGE.flag_language_key);
+        this.languageDao = new LanguageDao(FLAG_LANGUAGE.flag_key);
         this.state = {
             language: [],
         };
@@ -71,7 +71,7 @@ class HotTab extends Component {
 
     constructor(props) {
         super(props);
-        this.dataRepository = new DataRepository();
+        this.dataRepository = new DataRepository(FLAG_SOTRAGE.FLAG_HOT);
         this.state = {
             result: [],
             loaded: false,
@@ -101,19 +101,19 @@ class HotTab extends Component {
                 // console.log(result);
                 // console.log(result.update_date);
                 if (result && result.update_date && !this.dataRepository.checkDate(result.update_date)) {
-                    ToastUtil.show('数据过期');
+                    // ToastUtil.show('数据过期');
                     this.setState({
                         isRefresh: true
                     });
                     return this.dataRepository.fetchNetRepository(url);
                 } else {
-                    ToastUtil.show('缓存数据');
+                    // ToastUtil.show('缓存数据');
                 }
             })
             .then(items => {
                 // console.log(items);
                 if (!items || items.length === 0) return;
-                ToastUtil.show('网络数据');
+                // ToastUtil.show('网络数据');
                 this.setState({
                     result: items,
                     isRefresh: false

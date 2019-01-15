@@ -1,12 +1,13 @@
 
 import { AsyncStorage } from 'react-native';
-import {DefaultTag as keys} from '../../utils/Consts';
+import keys from '../../../res/data/keys.json';
+import langs from '../../../res/data/langs.json';
 import ToastUtil from '../../utils/ToastUtil'
 
 
 export var FLAG_LANGUAGE = {
-    flag_language_language: 'flag_language_language',
-    flag_language_key: 'flag_language_key',
+    flag_language: 'flag_language',
+    flag_key: 'flag_key',
 };
 /**
  * 标签数据管理
@@ -31,7 +32,7 @@ export default class LanguageDao {
                             reject(e);
                         }
                     } else {
-                        var data = this.flag === FLAG_LANGUAGE.flag_language_key ? keys : null;
+                        var data = this.flag === FLAG_LANGUAGE.flag_key ? keys : langs;
                         this.save(data);
                         resolve(data);
                     }
@@ -45,11 +46,11 @@ export default class LanguageDao {
      */
     save(data) {
         AsyncStorage.setItem(this.flag, JSON.stringify(data), (error) => {
-            if(error){
+            if (error) {
                 ToastUtil.show('保存失败');
-            }else{
+            } else {
                 // ToastUtil.show('保存成功');
-                console.log('保存成功');
+                // console.log('保存成功');
             }
         })
     }

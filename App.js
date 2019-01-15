@@ -23,10 +23,6 @@ import RepositoryDetailPage from './js/page/RepositoryDetailPage';
 // import WebViewTest from './js/test/WebViewTest';
 import { ThemeColor } from './js/utils/Consts';
 
-
-
-
-
 const tabNavigator = createBottomTabNavigator({
   HotPage: {
     screen: Hot,

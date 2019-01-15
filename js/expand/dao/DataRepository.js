@@ -1,5 +1,14 @@
 import { AsyncStorage } from 'react-native';
+import GitHubTrending from 'GitHubTrending';
+
+//区分是hot页面或者trending页面
+export var FLAG_SOTRAGE = { FLAG_HOT: 'hot', FLAG_TRENDING: 'trending' };
 export default class DataRepository {
+
+    constructor(flag) {
+        this.flag = flag;
+        if (flag === FLAG_SOTRAGE.FLAG_TRENDING) this.trending = new GitHubTrending();
+    }
 
     /**
      * 从网络获取数据
@@ -7,20 +16,39 @@ export default class DataRepository {
      */
     fetchNetRepository(url) {
         return new Promise((resolve, reject) => {
-            fetch(url)
-                .then(response => response.json())
-                .then(result => {
-                    if (!result) {
-                        reject(new Error('response data is null'));
-                        return;
-                    }
-                    resolve(result.items);
-                    //缓存数据到本地
-                    this.saveRepository(url, result.items);
-                })
-                .catch(error => {
-                    reject(error);
-                })
+            //trending页面获取数据
+            if (this.flag === FLAG_SOTRAGE.FLAG_TRENDING) {
+                this.trending.fetchTrending(url)
+                    .then(result => {
+                        if (!result) {
+                            reject(new Error('response data is null'));
+                            return;
+                        } else {
+                            resolve(result);
+                            //缓存数据到本地
+                            this.saveRepository(url, result);
+                        }
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            } else {
+                fetch(url)
+                    .then(response => response.json())
+                    .then(result => {
+                        if (!result) {
+                            reject(new Error('response data is null'));
+                            return;
+                        }
+                        resolve(result.items);
+                        //缓存数据到本地
+                        this.saveRepository(url, result.items);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+                    .done();
+            }
         });
     }
 
