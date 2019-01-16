@@ -8,12 +8,15 @@ import RepositoryItem from '../common/RepositoryItem';
 import Loading from '../common/Loading';
 import { ThemeColor } from '../utils/Consts';
 import LanguageDao, { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
+import CollectDao from '../expand/dao/CollectDao';
+import ProjectModel from '../model/ProjectModel';
 import ToastUtil from '../utils/ToastUtil';
+import Utils from '../utils/Utils';
 
 
 const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY_STR = '&sort=stars';
-
+var collectDao = new CollectDao(FLAG_SOTRAGE.FLAG_HOT);
 class Hot extends Component {
 
     constructor(props) {
@@ -83,6 +86,36 @@ class HotTab extends Component {
         this.fetchData(this.props.path);
     }
 
+    /**
+     * 重构数组
+     * @param {array} items 
+     */
+    flushResult(items) {
+        let result = [];
+        items.map(item => {
+            result.push(new ProjectModel(item, Utils.checkIsCollected(item, this.state.collectKeys)));
+        });
+        this.setState({
+            result: result,
+            isRefresh: false
+        });
+    }
+
+    getCollectKeys(items) {
+        collectDao.getCollectKeys()
+            .then(keys => {
+                if (keys) {
+                    this.setState({
+                        collectKeys: keys,
+                    })
+                }
+                this.flushResult(items);
+            })
+            .catch(error => {
+                this.flushResult(items);
+            })
+    }
+
     fetchData(key) {
         this.setState({
             isRefresh: true
@@ -94,9 +127,8 @@ class HotTab extends Component {
                 //首先将数据关联到组件
                 this.setState({
                     loaded: true,
-                    result: items,
-                    isRefresh: false
                 });
+                this.getCollectKeys(items);
                 //再判断数据是否过期
                 // console.log(result);
                 // console.log(result.update_date);
@@ -114,22 +146,35 @@ class HotTab extends Component {
                 // console.log(items);
                 if (!items || items.length === 0) return;
                 // ToastUtil.show('网络数据');
-                this.setState({
-                    result: items,
-                    isRefresh: false
-                });
+                this.getCollectKeys(items);
             })
             .catch(error => {
-                this.setState({
-                    result: JSON.stringify(error),
-                });
+                console.log(error)
             });
     }
 
-    renderItem(item) {
+    renderItem(projectModel) {
         return (
-            <RepositoryItem data={item} onSelect={() => this.onSelect(item)} />
+            <RepositoryItem
+                key={projectModel.item.id}
+                projectModel={projectModel}
+                onSelect={() => this.onSelect(projectModel.item)}
+                onCollect={(item, isCollect) => this.onCollect(item, isCollect)}
+            />
         );
+    }
+
+    /**
+     * 收藏按钮单击回调
+     * @param {object} item 
+     * @param {boolean} isCollect 
+     */
+    onCollect(item, isCollect) {
+        if (isCollect) {
+            collectDao.collect(item.id.toString(), JSON.stringify(item));
+        } else {
+            collectDao.unCollect(item.id.toString());
+        }
     }
 
     onSelect(item) {

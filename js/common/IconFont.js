@@ -2,7 +2,7 @@ import createIconSet from 'react-native-vector-icons/lib/create-icon-set';
 
 const glyphMap = {
     'icon_user': 58979,
-    'icon_collect': 58928,
+    'icon_collect': 58918,
     'icon_hot':59222,
     'icon_trending':60788,
     'icon_checked':59127,

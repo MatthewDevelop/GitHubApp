@@ -7,15 +7,27 @@ import {
     TouchableOpacity
 } from 'react-native';
 import Icon from './IconFont';
+import { ThemeColor } from '../utils/Consts';
 
 export default class RepositoryItem extends Component {
 
     constructor(props) {
         super(props);
+        this.projectModel = this.props.projectModel;
+        this.state = {
+            isCollect: this.projectModel.isCollect,
+        }
+    }
+
+    collect() {
+        this.props.onCollect(this.props.projectModel.item, !this.state.isCollect);
+        this.setState({
+            isCollect: !this.state.isCollect,
+        });
     }
 
     render() {
-        const { data } = this.props;
+        const data = this.projectModel.item;
         return (
             <TouchableOpacity style={styles.container} onPress={this.props.onSelect}>
                 <View style={styles.itemContainer}>
@@ -31,7 +43,12 @@ export default class RepositoryItem extends Component {
                             <Text>Stars: </Text>
                             <Text>{data.stargazers_count}</Text>
                         </View>
-                        <Icon name='icon_collect' size={16} color='gray' />
+                        <Icon
+                            name='icon_collect'
+                            size={22}
+                            color={this.state.isCollect ? ThemeColor : 'gray'}
+                            style={{ marginRight: 5 }}
+                            onPress={() => this.collect()} />
                     </View>
                 </View>
             </TouchableOpacity>
