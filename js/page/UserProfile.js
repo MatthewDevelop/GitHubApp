@@ -26,7 +26,15 @@ class UserProfile extends Component {
     }
 
     toTagSortPage() {
-        this.navigation.navigate('tagSortPage');
+        this.navigation.navigate('tagSortPage', {
+            flag: FLAG_LANGUAGE.flag_key,
+        });
+    }
+
+    toLanguageSortPage() {
+        this.navigation.navigate('tagSortPage', {
+            flag: FLAG_LANGUAGE.flag_language,
+        });
     }
 
     toTagRemovePage() {
@@ -54,6 +62,9 @@ class UserProfile extends Component {
                 </View>
                 <View style={{ margin: 10 }}>
                     <Button title='标签排序' onPress={() => this.toTagSortPage()} />
+                </View>
+                <View style={{ margin: 10 }}>
+                    <Button title='语言排序' onPress={() => this.toLanguageSortPage()} />
                 </View>
                 <View style={{ margin: 10 }}>
                     <Button title='移除标签' onPress={() => this.toTagRemovePage()} />

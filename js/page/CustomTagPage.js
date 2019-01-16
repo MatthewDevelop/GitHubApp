@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert, ScrollView } from 'react-native';
 import { ThemeColor } from '../utils/Consts';
 import LanguageDao, { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
 import CheckBox from 'react-native-check-box';
@@ -13,7 +13,7 @@ class CustomTagPage extends Component {
         super(props);
         this.navigation = this.props.navigation;
         this.isRemoveKey = this.navigation.getParam('isRemoveKey', false);
-        this.flag=this.navigation.getParam('flag',FLAG_LANGUAGE.flag_key);
+        this.flag = this.navigation.getParam('flag', FLAG_LANGUAGE.flag_key);
         console.log(this.flag);
         this.languageDao = new LanguageDao(this.flag);
         this.changedValues = [];
@@ -70,6 +70,8 @@ class CustomTagPage extends Component {
     static navigationOptions = ({ navigation }) => {
         let title = navigation.getParam('isRemoveKey') ? '移除标签' : '自定义标签';
         let rightText = navigation.getParam('isRemoveKey') ? '移除' : '保存';
+        let flag = navigation.getParam('flag');
+        title = flag === FLAG_LANGUAGE.flag_language ? '自定义语言' : title;
         return ({
             headerTitle: title,
             headerStyle: {
@@ -122,6 +124,7 @@ class CustomTagPage extends Component {
             save: this.save,
             back: this.back,
             isRemoveKey: this.isRemoveKey,
+            flag: this.flag,
         })
     }
 
@@ -178,9 +181,11 @@ class CustomTagPage extends Component {
 
     render() {
         return (
-            <View style={{ padding: 10 }}>
-                {this.renderView()}
-            </View>
+            <ScrollView>
+                <View style={{ padding: 10 }}>
+                    {this.renderView()}
+                </View>
+            </ScrollView>
         );
     }
 }

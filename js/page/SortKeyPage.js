@@ -47,8 +47,9 @@ class SortKeyPage extends Component {
     }
 
     static navigationOptions = ({ navigation }) => {
+        let title = navigation.getParam('flag') === FLAG_LANGUAGE.flag_language ? '语言排序' : '标签排序';
         return ({
-            headerTitle: '标签排序',
+            headerTitle: title,
             headerStyle: {
                 backgroundColor: ThemeColor,
             },
@@ -76,20 +77,24 @@ class SortKeyPage extends Component {
 
     constructor(props) {
         super(props);
+        this.flag = this.props.navigation.getParam('flag');
+        console.log(this.flag);
         this.originDataArray = [];
         this.sortResultArray = [];
         this.originalCheckedArray = [];
         this.state = {
             dataArray: [],
         }
+        console.log('constructor');
     }
 
     componentDidMount() {
         this.props.navigation.setParams({
             save: this.save,
             back: this.back,
+            flag: this.flag,
         });
-        this.languageDao = new LanguageDao(FLAG_LANGUAGE.flag_language_key);
+        this.languageDao = new LanguageDao(this.flag);
         this.loadData();
     }
 
