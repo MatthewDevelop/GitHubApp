@@ -23,6 +23,7 @@ const timeSpanTextArray = [
     new TimeSpan('本 周', 'since=weekly'),
     new TimeSpan('本 月', 'since=monthly')]
 var collectDao = new CollectDao(FLAG_SOTRAGE.FLAG_TRENDING);
+var dataRepository = new DataRepository(FLAG_SOTRAGE.FLAG_TRENDING);
 class Trending extends Component {
 
     constructor(props) {
@@ -141,7 +142,6 @@ class TrendingTab extends Component {
 
     constructor(props) {
         super(props);
-        this.dataRepository = new DataRepository(FLAG_SOTRAGE.FLAG_TRENDING);
         this.state = {
             result: [],
             loaded: false,
@@ -202,7 +202,7 @@ class TrendingTab extends Component {
         })
         let url = URL + (category === '' ? category : `/${category}`)
             + `?${timeSpan.searchText}`;
-        this.dataRepository.fetchRepository(url)
+        dataRepository.fetchRepository(url)
             .then(result => {
                 let items = result && result.items ? result.items : result ? result : [];
                 //首先将数据关联到组件
@@ -211,11 +211,11 @@ class TrendingTab extends Component {
                 });
                 this.getCollectKeys(items);
                 //再判断数据是否过期
-                if (result && result.update_date && !this.dataRepository.checkDate(result.update_date)) {
+                if (!items && result && result.update_date && !dataRepository.checkDate(result.update_date)) {
                     this.setState({
                         isRefresh: true
                     });
-                    return this.dataRepository.fetchNetRepository(url);
+                    return dataRepository.fetchNetRepository(url);
                 } else {
                 }
             })

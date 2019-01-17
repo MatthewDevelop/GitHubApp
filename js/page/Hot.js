@@ -17,6 +17,7 @@ import Utils from '../utils/Utils';
 const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY_STR = '&sort=stars';
 var collectDao = new CollectDao(FLAG_SOTRAGE.FLAG_HOT);
+var dataRepository = new DataRepository(FLAG_SOTRAGE.FLAG_HOT);
 class Hot extends Component {
 
     constructor(props) {
@@ -74,7 +75,7 @@ class HotTab extends Component {
 
     constructor(props) {
         super(props);
-        this.dataRepository = new DataRepository(FLAG_SOTRAGE.FLAG_HOT);
+        dataRepository = new DataRepository(FLAG_SOTRAGE.FLAG_HOT);
         this.state = {
             result: [],
             loaded: false,
@@ -121,7 +122,7 @@ class HotTab extends Component {
             isRefresh: true
         })
         let url = URL + key + QUERY_STR;
-        this.dataRepository.fetchRepository(url)
+        dataRepository.fetchRepository(url)
             .then(result => {
                 let items = result && result.items ? result.items : result ? result : [];
                 //首先将数据关联到组件
@@ -132,12 +133,12 @@ class HotTab extends Component {
                 //再判断数据是否过期
                 // console.log(result);
                 // console.log(result.update_date);
-                if (result && result.update_date && !this.dataRepository.checkDate(result.update_date)) {
+                if (!items && result && result.update_date && !dataRepository.checkDate(result.update_date)) {
                     // ToastUtil.show('数据过期');
                     this.setState({
                         isRefresh: true
                     });
-                    return this.dataRepository.fetchNetRepository(url);
+                    return dataRepository.fetchNetRepository(url);
                 } else {
                     // ToastUtil.show('缓存数据');
                 }
