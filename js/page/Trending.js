@@ -12,6 +12,9 @@ import TrendingItem from '../common/TrendingItem';
 import TimeSpan from '../model/TimeSpan';
 import Popover from '../common/Popover';
 import { white } from 'ansi-colors';
+import ProjectModel from '../model/ProjectModel';
+import Utils from '../utils/Utils';
+import CollectDao from '../expand/dao/CollectDao';
 
 
 const URL = 'https://github.com/trending';
@@ -19,7 +22,7 @@ const timeSpanTextArray = [
     new TimeSpan('今 天', 'since=daily'),
     new TimeSpan('本 周', 'since=weekly'),
     new TimeSpan('本 月', 'since=monthly')]
-
+var collectDao = new CollectDao(FLAG_SOTRAGE.FLAG_TRENDING);
 class Trending extends Component {
 
     constructor(props) {
@@ -156,6 +159,43 @@ class TrendingTab extends Component {
         }
     }
 
+    /**
+     * 重构数组
+     * @param {array} items 
+     */
+    flushResult(items) {
+        let result = [];
+        let keys = this.state.collectKeys;
+        items.forEach((item) => {
+            result.push(new ProjectModel(item, Utils.checkIsCollected(item, keys)));
+        });
+        this.setState({
+            result: result,
+            isRefresh: false
+        });
+    }
+
+
+    /**
+     * 获取收藏的key
+     * @param {array} items 
+     */
+    getCollectKeys(items) {
+        collectDao.getCollectKeys()
+            .then(keys => {
+                if (keys) {
+                    this.setState({
+                        collectKeys: keys,
+                    })
+                }
+                this.flushResult(items);
+            })
+            .catch(error => {
+                this.flushResult(items);
+            })
+    }
+
+
     fetchData(timeSpan, category) {
         this.setState({
             isRefresh: true
@@ -168,30 +208,20 @@ class TrendingTab extends Component {
                 //首先将数据关联到组件
                 this.setState({
                     loaded: true,
-                    result: items,
-                    isRefresh: false
                 });
+                this.getCollectKeys(items);
                 //再判断数据是否过期
-                // console.log(result);
-                // console.log(result.update_date);
                 if (result && result.update_date && !this.dataRepository.checkDate(result.update_date)) {
-                    // ToastUtil.show('数据过期');
                     this.setState({
                         isRefresh: true
                     });
                     return this.dataRepository.fetchNetRepository(url);
                 } else {
-                    // ToastUtil.show('缓存数据');
                 }
             })
             .then(items => {
-                // console.log(items);
                 if (!items || items.length === 0) return;
-                // ToastUtil.show('网络数据');
-                this.setState({
-                    result: items,
-                    isRefresh: false
-                });
+                this.getCollectKeys(items);
             })
             .catch(error => {
                 this.setState({
@@ -200,10 +230,27 @@ class TrendingTab extends Component {
             });
     }
 
-    renderItem(item) {
+    renderItem(projectModel) {
         return (
-            <TrendingItem data={item} onSelect={() => this.onSelect(item)} />
+            <TrendingItem
+                key={projectModel.item.fullName}
+                data={projectModel}
+                onSelect={() => this.onSelect(projectModel.item)}
+                onCollect={(item, isCollect) => this.onCollect(item, isCollect)} />
         );
+    }
+
+    /**
+     * 收藏按钮单击回调
+     * @param {object} item 
+     * @param {boolean} isCollect 
+     */
+    onCollect(item, isCollect) {
+        if (isCollect) {
+            collectDao.collect(item.fullName, JSON.stringify(item));
+        } else {
+            collectDao.unCollect(item.fullName);
+        }
     }
 
     onSelect(item) {

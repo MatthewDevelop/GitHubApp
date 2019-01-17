@@ -6,9 +6,12 @@ export default class Utils {
      * @param {array} items keys
      */
     static checkIsCollected(item, items) {
-        for (let i = 0, len = items.length; i < len; i++) {
-            if (item.id.toString() === items[i]) {
-                return true;
+        if (items) {
+            for (let i = 0, len = items.length; i < len; i++) {
+                let id = item.id ? item.id.toString() : item.fullName;
+                if (id === items[i]) {
+                    return true;
+                }
             }
         }
         return false;
