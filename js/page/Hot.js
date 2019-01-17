@@ -93,9 +93,9 @@ class HotTab extends Component {
      */
     flushResult(items) {
         let result = [];
-        items.map(item => {
+        items.forEach((item) => {
             result.push(new ProjectModel(item, Utils.checkIsCollected(item, this.state.collectKeys)));
-        });
+        })
         this.setState({
             result: result,
             isRefresh: false
@@ -118,9 +118,11 @@ class HotTab extends Component {
     }
 
     fetchData(key) {
-        this.setState({
-            isRefresh: true
-        })
+        if (this.state.loaded) {
+            this.setState({
+                isRefresh: true
+            })
+        }
         let url = URL + key + QUERY_STR;
         dataRepository.fetchRepository(url)
             .then(result => {
@@ -154,13 +156,15 @@ class HotTab extends Component {
             });
     }
 
+
+
     renderItem(projectModel) {
         return (
             <RepositoryItem
                 key={projectModel.item.id}
                 projectModel={projectModel}
-                onSelect={() => this.onSelect(projectModel.item)}
-                onCollect={(item, isCollect) => this.onCollect(item, isCollect)}
+                onSelect={() => this.onSelect(projectModel)}
+                onCollect={(item, isCollect) => this.onCollect(item, isCollect, projectModel)}
             />
         );
     }
@@ -170,7 +174,9 @@ class HotTab extends Component {
      * @param {object} item 
      * @param {boolean} isCollect 
      */
-    onCollect(item, isCollect) {
+    onCollect(item, isCollect, projectModel) {
+        //防止刷新时异常渲染
+        projectModel.isCollect = isCollect;
         if (isCollect) {
             collectDao.collect(item.id.toString(), JSON.stringify(item));
         } else {
@@ -178,9 +184,17 @@ class HotTab extends Component {
         }
     }
 
-    onSelect(item) {
+    callback = (isChanged) => {
+        if (isChanged) {
+            this.onRefresh();
+        }
+    }
+
+    onSelect(projectModel) {
         this.props.navigation.navigate('repoDetailPage', {
-            item: item,
+            projectModel: projectModel,
+            collectDao: collectDao,
+            callback: this.callback,
         });
     }
 

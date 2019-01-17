@@ -8,26 +8,34 @@ import {
 } from 'react-native';
 import Icon from './IconFont';
 import HtmlView from 'react-native-htmlview';
-import { ThemeColor } from '../utils/Consts';
 
 export default class TrendingItem extends Component {
 
     constructor(props) {
         super(props);
+        this.projectModel = this.props.projectModel;
         this.state = {
-            isCollect: this.props.data.isCollect,
+            isCollect: this.projectModel.isCollect,
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.projectModel !== this.projectModel) {
+            this.setState({
+                isCollect: nextProps.projectModel.isCollect,
+            });
         }
     }
 
     collect() {
-        this.props.onCollect(this.props.data.item, !this.state.isCollect);
+        this.props.onCollect(this.props.projectModel.item, !this.state.isCollect);
         this.setState({
             isCollect: !this.state.isCollect,
         });
     }
 
     render() {
-        const data = this.props.data.item;
+        const data = this.props.projectModel.item;
         return (
             <TouchableOpacity style={styles.container} onPress={this.props.onSelect}>
                 <View style={styles.itemContainer}>
@@ -47,7 +55,7 @@ export default class TrendingItem extends Component {
                         <Icon
                             name='icon_collect'
                             size={22}
-                            color={this.state.isCollect ? ThemeColor : 'gray'}
+                            color={this.state.isCollect ? 'red' : 'gray'}
                             style={{ marginRight: 5 }}
                             onPress={() => this.collect()} />
                     </View>

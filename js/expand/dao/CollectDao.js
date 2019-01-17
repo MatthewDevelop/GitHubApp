@@ -1,6 +1,5 @@
 
 import { AsyncStorage } from 'react-native';
-import ToastUtil from '../../utils/ToastUtil'
 
 
 const COLLECT_KEY_PREFIX = 'collect_'
@@ -20,7 +19,7 @@ export default class CollectDao {
      * @param {string} value 项目
      * @param {func} callback 
      */
-    collect(key, value, callback) {
+    collect(key, value) {
         AsyncStorage.setItem(key, value, (error) => {
             if (!error) {
                 this.updateCollectKeys(key, true);

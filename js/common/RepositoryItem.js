@@ -7,7 +7,6 @@ import {
     TouchableOpacity
 } from 'react-native';
 import Icon from './IconFont';
-import { ThemeColor } from '../utils/Consts';
 
 export default class RepositoryItem extends Component {
 
@@ -24,6 +23,14 @@ export default class RepositoryItem extends Component {
         this.setState({
             isCollect: !this.state.isCollect,
         });
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.projectModel !== this.projectModel) {
+            this.setState({
+                isCollect: nextProps.projectModel.isCollect,
+            });
+        }
     }
 
     render() {
@@ -46,7 +53,7 @@ export default class RepositoryItem extends Component {
                         <Icon
                             name='icon_collect'
                             size={22}
-                            color={this.state.isCollect ? ThemeColor : 'gray'}
+                            color={this.state.isCollect ? 'red' : 'gray'}
                             style={{ marginRight: 5 }}
                             onPress={() => this.collect()} />
                     </View>

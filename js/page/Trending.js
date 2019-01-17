@@ -11,7 +11,6 @@ import LanguageDao, { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
 import TrendingItem from '../common/TrendingItem';
 import TimeSpan from '../model/TimeSpan';
 import Popover from '../common/Popover';
-import { white } from 'ansi-colors';
 import ProjectModel from '../model/ProjectModel';
 import Utils from '../utils/Utils';
 import CollectDao from '../expand/dao/CollectDao';
@@ -197,9 +196,11 @@ class TrendingTab extends Component {
 
 
     fetchData(timeSpan, category) {
-        this.setState({
-            isRefresh: true
-        })
+        if (this.state.loaded) {
+            this.setState({
+                isRefresh: true
+            })
+        }
         let url = URL + (category === '' ? category : `/${category}`)
             + `?${timeSpan.searchText}`;
         dataRepository.fetchRepository(url)
@@ -234,9 +235,9 @@ class TrendingTab extends Component {
         return (
             <TrendingItem
                 key={projectModel.item.fullName}
-                data={projectModel}
-                onSelect={() => this.onSelect(projectModel.item)}
-                onCollect={(item, isCollect) => this.onCollect(item, isCollect)} />
+                projectModel={projectModel}
+                onSelect={() => this.onSelect(projectModel)}
+                onCollect={(item, isCollect) => this.onCollect(item, isCollect, projectModel)} />
         );
     }
 
@@ -245,7 +246,9 @@ class TrendingTab extends Component {
      * @param {object} item 
      * @param {boolean} isCollect 
      */
-    onCollect(item, isCollect) {
+    onCollect(item, isCollect, projectModel) {
+        //刷新时不会异常渲染
+        projectModel.isCollect = isCollect;
         if (isCollect) {
             collectDao.collect(item.fullName, JSON.stringify(item));
         } else {
@@ -253,9 +256,19 @@ class TrendingTab extends Component {
         }
     }
 
-    onSelect(item) {
+
+
+    callback = (isChanged) => {
+        if (isChanged) {
+            this.onRefresh();
+        }
+    }
+
+    onSelect(projectModel) {
         this.props.navigation.navigate('repoDetailPage', {
-            item: item,
+            projectModel: projectModel,
+            collectDao: collectDao,
+            callback: this.callback
         });
     }
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, TextInput, WebView, Text } from 'react-native';
+import { View, WebView } from 'react-native';
 import styles from '../utils/Styles';
 import { ThemeColor } from '../utils/Consts';
 import IconFont from '../common/IconFont';
@@ -17,13 +17,13 @@ class RepositoryDetailPage extends Component {
             headerTitleStyle: {
                 color: 'rgba(0,0,0,0.5)',
             },
-            // headerRight: <Text
-            //     style={{
-            //         fontSize: 18,
-            //         marginRight: 5,
-            //     }}
-            //     onPress={navigation.getParam('close')}
-            // >关闭</Text>,
+            headerRight: <IconFont
+                name='icon_collect'
+                size={25}
+                color={navigation.getParam('isCollect') ? 'red' : 'gray'}
+                style={{ marginRight: 10 }}
+                onPress={navigation.getParam('collect')}
+            />,
             headerLeft: <IconFont
                 style={{
                     marginLeft: 10,
@@ -38,33 +38,46 @@ class RepositoryDetailPage extends Component {
 
     constructor(props) {
         super(props);
-        this.item = this.props.navigation.getParam('item');
-        let title = this.item.full_name ? this.item.full_name : this.item.fullName;
+        this.collectDao = this.props.navigation.getParam('collectDao');
+        this.item = this.props.navigation.getParam('projectModel').item;
+        this.title = this.item.full_name ? this.item.full_name : this.item.fullName;
         this.url = this.item.html_url ? this.item.html_url : TRENDING_URL + this.item.url;
+        this.isCollect = this.props.navigation.getParam('projectModel').isCollect;
+        this.originCollectState = this.props.navigation.getParam('projectModel').isCollect
         this.state = {
-            url: this.url,
             canGoBack: false,
-            title: title,
         };
     }
 
     componentDidMount() {
         this.props.navigation.setParams({
             back: this.back,
-            title: this.state.title,
-            // close: this.close,
+            collect: this.collect,
+            title: this.title,
+            isCollect: this.isCollect,
         });
     }
 
-    // close = () => {
-    //     this.props.navigation.pop();
-    // }
+    collect = () => {
+        this.isCollect = !this.isCollect;
+        let key = this.item.id ? this.item.id.toString() : this.item.fullName;
+        if (this.isCollect) {
+            this.collectDao.collect(key, JSON.stringify(this.item));
+        } else {
+            this.collectDao.unCollect(key);
+        }
+        this.props.navigation.setParams({
+            isCollect: this.isCollect,
+        });
+    }
+
 
     back = () => {
         if (this.state.canGoBack) {
             this.webview.goBack();
         } else {
-            this.props.navigation.pop();
+            this.props.navigation.state.params.callback(!(this.originCollectState === this.isCollect));
+            this.props.navigation.goBack();
         }
     }
 
@@ -79,7 +92,7 @@ class RepositoryDetailPage extends Component {
             <View style={styles.pageHot}>
                 <WebView
                     ref={webview => this.webview = webview}
-                    source={{ uri: this.state.url }}
+                    source={{ uri: this.url }}
                     onNavigationStateChange={state => this.onNavigationStateChange(state)}
                     // 添加加载框
                     startInLoadingState={true} />
