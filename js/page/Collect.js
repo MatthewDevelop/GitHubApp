@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, FlatList } from 'react-native';
+import { View, FlatList, Text } from 'react-native';
 import styles from '../utils/Styles';
 import NavigationBar from '../common/NavigationBar';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
@@ -10,7 +10,8 @@ import Loading from '../common/Loading';
 import { ThemeColor } from '../utils/Consts';
 import CollectDao from '../expand/dao/CollectDao';
 import ProjectModel from '../model/ProjectModel';
-import Utils from '../utils/Utils';
+import IconFont from '../common/IconFont';
+import ListEmptyConponent from '../common/ListEmptyConponent';
 
 
 class Collect extends Component {
@@ -147,12 +148,33 @@ class CollectTab extends Component {
     }
 
 
+    // createEmptyComponent() {
+    //     return <View style={{ height: this.state.height, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+    //         <IconFont name='icon_empty' size={30} color='gray' />
+    //         <Text>空空如也，点击刷新~</Text>
+    //     </View>;
+    // }
+
+    // onLayout(e) {
+    //     let height = e.nativeEvent.layout.height;
+    //     if (this.state.height < height) {
+    //         this.setState({ height: height });
+    //     }
+    // }
+
+
+
     render() {
 
         if (!this.state.loaded) {
             return (
                 <Loading />
             );
+        }
+
+        if (this.state.result.length === 0) {
+            return (
+                <ListEmptyConponent message='空空如也，点击刷新~' onClick={() => this.onRefresh()} />);
         }
 
         return (
@@ -165,6 +187,7 @@ class CollectTab extends Component {
                     refreshing={this.state.isRefresh}
                     onRefresh={() => this.onRefresh()}
                 // ListEmptyComponent={() => this.createEmptyComponent()}
+                // onLayout={e => this.onLayout(e)}
                 // ListHeaderComponent={() => this.createHeaderComponent()}
                 // ListFooterComponent={() => this.createFooterComponent()}
                 />
