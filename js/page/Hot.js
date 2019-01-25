@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, FlatList } from 'react-native';
+import { View, FlatList, DeviceEventEmitter } from 'react-native';
 import styles from '../utils/Styles';
 import NavigationBar from '../common/NavigationBar';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
@@ -84,16 +84,25 @@ class HotTab extends Component {
     }
 
     componentDidMount() {
+        this.listener = DeviceEventEmitter.addListener('hot-collect-data-changed', () => {
+            console.log('received');
+            this.onRefresh();
+        });
         this.fetchData(this.props.path);
+    }
+
+
+    componentWillUnmount() {
+        this.listener.remove();
     }
 
     /**
      * 重构数组
      * @param {array} items 
      */
-    flushResult(items) {
+    flushResult() {
         let result = [];
-        items.forEach((item) => {
+        this.items.forEach((item) => {
             result.push(new ProjectModel(item, Utils.checkIsCollected(item, this.state.collectKeys)));
         })
         this.setState({
@@ -102,18 +111,21 @@ class HotTab extends Component {
         });
     }
 
-    getCollectKeys(items) {
+    getCollectKeys() {
         collectDao.getCollectKeys()
-            .then(keys => {
-                if (keys) {
-                    this.setState({
-                        collectKeys: keys,
-                    })
+            .then(result => {
+                let keys = []
+                if (result) {
+                    keys = JSON.parse(result);
                 }
-                this.flushResult(items);
+                this.setState({
+                    collectKeys: keys,
+                })
+                this.flushResult();
             })
             .catch(error => {
-                this.flushResult(items);
+                console.log(error);
+                this.flushResult();
             })
     }
 
@@ -126,16 +138,16 @@ class HotTab extends Component {
         let url = URL + key + QUERY_STR;
         dataRepository.fetchRepository(url)
             .then(result => {
-                let items = result && result.items ? result.items : result ? result : [];
+                this.items = result && result.items ? result.items : result ? result : [];
                 //首先将数据关联到组件
                 this.setState({
                     loaded: true,
                 });
-                this.getCollectKeys(items);
+                this.getCollectKeys();
                 //再判断数据是否过期
                 // console.log(result);
                 // console.log(result.update_date);
-                if (!items && result && result.update_date && !dataRepository.checkDate(result.update_date)) {
+                if (!this.items && result && result.update_date && !dataRepository.checkDate(result.update_date)) {
                     // ToastUtil.show('数据过期');
                     this.setState({
                         isRefresh: true
@@ -148,8 +160,9 @@ class HotTab extends Component {
             .then(items => {
                 // console.log(items);
                 if (!items || items.length === 0) return;
+                this.items = items;
                 // ToastUtil.show('网络数据');
-                this.getCollectKeys(items);
+                this.getCollectKeys();
             })
             .catch(error => {
                 console.log(error)
@@ -174,14 +187,15 @@ class HotTab extends Component {
      * @param {object} item 
      * @param {boolean} isCollect 
      */
-    onCollect(item, isCollect, projectModel) {
+    async onCollect(item, isCollect, projectModel) {
         //防止刷新时异常渲染
         projectModel.isCollect = isCollect;
         if (isCollect) {
-            collectDao.collect(item.id.toString(), JSON.stringify(item));
+            await collectDao.collect(item.id.toString(), JSON.stringify(item));
         } else {
-            collectDao.unCollect(item.id.toString());
+            await collectDao.unCollect(item.id.toString());
         }
+        DeviceEventEmitter.emit('collect-data-changed');
     }
 
     callback = (isChanged) => {

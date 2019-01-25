@@ -9,7 +9,6 @@ const COLLECT_KEY_PREFIX = 'collect_'
 export default class CollectDao {
 
     constructor(flag) {
-        this.flag = flag;
         this.collectKeys = COLLECT_KEY_PREFIX + flag
     }
 
@@ -17,45 +16,34 @@ export default class CollectDao {
      * 收藏
      * @param {string} key 项目id或名称
      * @param {string} value 项目
-     * @param {func} callback 
      */
-    collect(key, value) {
-        AsyncStorage.setItem(key, value, (error) => {
-            if (!error) {
-                this.updateCollectKeys(key, true);
-            }
-        })
+    async collect(key, value) {
+        try {
+            await AsyncStorage.setItem(key, value)
+            await this.updateCollectKeys(key, true);
+        } catch (error) {
+            console.log(error);
+        };
     }
 
     /**
      * 移除已经收藏的项目
      * @param {string} key 
      */
-    unCollect(key) {
-        AsyncStorage.removeItem(key, error => {
-            if (!error) {
-                this.updateCollectKeys(key, false);
-            }
-        })
+    async unCollect(key) {
+        try {
+            await AsyncStorage.removeItem(key);
+            await this.updateCollectKeys(key, false);
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     /**
      * 获取收藏的所有key
      */
     getCollectKeys() {
-        return new Promise((resolve, reject) => {
-            AsyncStorage.getItem(this.collectKeys, (error, result) => {
-                if (!error) {
-                    try {
-                        resolve(JSON.parse(result))
-                    } catch (e) {
-                        reject(e);
-                    }
-                } else {
-                    reject(error);
-                }
-            })
-        });
+        return AsyncStorage.getItem(this.collectKeys);
     }
 
     /**
@@ -63,9 +51,9 @@ export default class CollectDao {
      * @param {string} key 
      * @param {boolean} isAdd true:添加 false:移除
      */
-    updateCollectKeys(key, isAdd) {
-        AsyncStorage.getItem(this.collectKeys, (error, result) => {
-            if (!error) {
+    async updateCollectKeys(key, isAdd) {
+        await AsyncStorage.getItem(this.collectKeys)
+            .then(result => {
                 let collectKeys = [];
                 if (result) {
                     collectKeys = JSON.parse(result);
@@ -80,9 +68,14 @@ export default class CollectDao {
                         collectKeys.splice(index, 1);
                     }
                 }
-                AsyncStorage.setItem(this.collectKeys, JSON.stringify(collectKeys));
-            }
-        })
+                return AsyncStorage.setItem(this.collectKeys, JSON.stringify(collectKeys));
+            })
+            .then(() => {
+                console.log('更新成功');
+            })
+            .catch((error) => {
+                console.log('更新出错');
+            });
     }
 
 
@@ -92,30 +85,29 @@ export default class CollectDao {
     getAllCollectData() {
         return new Promise((resolve, reject) => {
             this.getCollectKeys()
-                .then(keys => {
+                .then(result => {
+                    let keys = [];
+                    if (result) {
+                        keys = JSON.parse(result);
+                    }
+                    return AsyncStorage.multiGet(keys);
+                })
+                .then(results => {
                     let items = [];
-                    if (keys) {
-                        AsyncStorage.multiGet(keys, (errors, results) => {
-                            try {
-                                results.forEach(item => {
-                                    let value = item[1];
-                                    if (value) {
-                                        items.push(JSON.parse(value));
-                                    }
-                                })
-                                resolve(items);
-                            } catch (e) {
-                                reject(e);
+                    if (results) {
+                        results.forEach(item => {
+                            let value = item[1];
+                            if (value) {
+                                items.push(JSON.parse(value));
                             }
                         });
-                    } else {
-                        resolve(items);
                     }
+                    return resolve(items);
                 })
                 .catch(e => {
                     reject(e);
                 });
+
         });
     }
-
 }

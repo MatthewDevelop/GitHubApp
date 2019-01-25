@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, FlatList, TouchableOpacity, Text } from 'react-native';
+import { View, FlatList, TouchableOpacity, Text, DeviceEventEmitter } from 'react-native';
 import styles from '../utils/Styles';
 import NavigationBar from '../common/NavigationBar';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
@@ -149,7 +149,14 @@ class TrendingTab extends Component {
     }
 
     componentDidMount() {
+        this.listener = DeviceEventEmitter.addListener('trending-collect-data-changed', () => {
+            this.onRefresh();
+        });
         this.fetchData(this.props.timeSpan, this.props.path, true);
+    }
+
+    componentWillUnmount() {
+        this.listener.remove();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -160,12 +167,11 @@ class TrendingTab extends Component {
 
     /**
      * 重构数组
-     * @param {array} items 
      */
-    flushResult(items) {
+    flushResult() {
         let result = [];
         let keys = this.state.collectKeys;
-        items.forEach((item) => {
+        this.items.forEach((item) => {
             result.push(new ProjectModel(item, Utils.checkIsCollected(item, keys)));
         });
         this.setState({
@@ -179,18 +185,21 @@ class TrendingTab extends Component {
      * 获取收藏的key
      * @param {array} items 
      */
-    getCollectKeys(items) {
+    getCollectKeys() {
         collectDao.getCollectKeys()
-            .then(keys => {
-                if (keys) {
-                    this.setState({
-                        collectKeys: keys,
-                    })
+            .then(result => {
+                let keys = [];
+                if (result) {
+                    keys = JSON.parse(result);
                 }
-                this.flushResult(items);
+                this.setState({
+                    collectKeys: keys,
+                })
+                this.flushResult();
             })
             .catch(error => {
-                this.flushResult(items);
+                console.log(error);
+                this.flushResult();
             })
     }
 
@@ -205,14 +214,14 @@ class TrendingTab extends Component {
             + `?${timeSpan.searchText}`;
         dataRepository.fetchRepository(url)
             .then(result => {
-                let items = result && result.items ? result.items : result ? result : [];
+                this.items = result && result.items ? result.items : result ? result : [];
                 //首先将数据关联到组件
                 this.setState({
                     loaded: true,
                 });
-                this.getCollectKeys(items);
+                this.getCollectKeys();
                 //再判断数据是否过期
-                if (!items && result && result.update_date && !dataRepository.checkDate(result.update_date)) {
+                if (!this.items && result && result.update_date && !dataRepository.checkDate(result.update_date)) {
                     this.setState({
                         isRefresh: true
                     });
@@ -222,7 +231,8 @@ class TrendingTab extends Component {
             })
             .then(items => {
                 if (!items || items.length === 0) return;
-                this.getCollectKeys(items);
+                this.items = items;
+                this.getCollectKeys();
             })
             .catch(error => {
                 this.setState({
@@ -246,14 +256,15 @@ class TrendingTab extends Component {
      * @param {object} item 
      * @param {boolean} isCollect 
      */
-    onCollect(item, isCollect, projectModel) {
+    async onCollect(item, isCollect, projectModel) {
         //刷新时不会异常渲染
         projectModel.isCollect = isCollect;
         if (isCollect) {
-            collectDao.collect(item.fullName, JSON.stringify(item));
+            await collectDao.collect(item.fullName, JSON.stringify(item));
         } else {
-            collectDao.unCollect(item.fullName);
+            await collectDao.unCollect(item.fullName);
         }
+        DeviceEventEmitter.emit('collect-data-changed');
     }
 
 
@@ -286,7 +297,6 @@ class TrendingTab extends Component {
                 <Loading />
             );
         }
-
         return (
             <View>
                 <FlatList

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, FlatList, Text } from 'react-native';
+import { View, FlatList, DeviceEventEmitter } from 'react-native';
 import styles from '../utils/Styles';
 import NavigationBar from '../common/NavigationBar';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
@@ -10,8 +10,8 @@ import Loading from '../common/Loading';
 import { ThemeColor } from '../utils/Consts';
 import CollectDao from '../expand/dao/CollectDao';
 import ProjectModel from '../model/ProjectModel';
-import IconFont from '../common/IconFont';
 import ListEmptyConponent from '../common/ListEmptyConponent';
+import ArrayUtil from '../utils/ArrayUtil';
 
 
 class Collect extends Component {
@@ -54,7 +54,15 @@ class CollectTab extends Component {
     }
 
     componentDidMount() {
+        this.listener = DeviceEventEmitter.addListener('collect-data-changed', () => {
+            this.onRefresh();
+        });
         this.fetchData(this.props.path);
+    }
+
+
+    componentWillUnmount() {
+        this.listener.remove();
     }
 
     /**
@@ -65,7 +73,7 @@ class CollectTab extends Component {
         let result = [];
         items.forEach((item) => {
             result.push(new ProjectModel(item, true));
-        })
+        });
         this.setState({
             result: result,
             isRefresh: false
@@ -115,16 +123,21 @@ class CollectTab extends Component {
      * @param {object} item 
      * @param {boolean} isCollect 
      */
-    onCollect(item, isCollect, projectModel) {
+    async onCollect(item, isCollect, projectModel) {
         //防止刷新时异常渲染
         projectModel.isCollect = isCollect;
         let key = this.props.flag === FLAG_SOTRAGE.FLAG_HOT ? item.id.toString() : item.fullName;
         if (isCollect) {
-            this.collectDao.collect(key, JSON.stringify(item));
+            await this.collectDao.collect(key, JSON.stringify(item));
         } else {
-            this.collectDao.unCollect(key.toString());
+            await this.collectDao.unCollect(key.toString());
         }
         this.onRefresh();
+        if (this.props.flag === FLAG_SOTRAGE.FLAG_HOT) {
+            DeviceEventEmitter.emit('hot-collect-data-changed');
+        } else {
+            DeviceEventEmitter.emit('trending-collect-data-changed');
+        }
     }
 
     callback = (isChanged) => {
