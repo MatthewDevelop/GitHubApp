@@ -221,12 +221,14 @@ class TrendingTab extends Component {
                 });
                 this.getCollectKeys();
                 //再判断数据是否过期
-                if (!this.items && result && result.update_date && !dataRepository.checkDate(result.update_date)) {
+                if (result && result.update_date && !dataRepository.checkDate(result.update_date)) {
+                    console.log('数据过期');
                     this.setState({
                         isRefresh: true
                     });
                     return dataRepository.fetchNetRepository(url);
                 } else {
+                    console.log('缓存数据');
                 }
             })
             .then(items => {

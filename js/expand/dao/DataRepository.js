@@ -130,11 +130,6 @@ export default class DataRepository {
         //保存时间
         let saveDate = new Date();
         saveDate.setTime(longTime);
-        // console.log(currentDate.getMonth() !== saveDate.getMonth());
-        // console.log(currentDate.getDay() !== saveDate.getDay());
-        // console.log(currentDate.getHours());
-        // console.log(saveDate.getHours());
-        // console.log(currentDate.getHours() - saveDate.getHours());
         if (currentDate.getMonth() !== saveDate.getMonth()) return false;
         if (currentDate.getDay() !== saveDate.getDay()) return false;
         if (currentDate.getHours() - saveDate.getHours() > 4) return false;

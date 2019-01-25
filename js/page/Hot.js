@@ -145,16 +145,16 @@ class HotTab extends Component {
                 });
                 this.getCollectKeys();
                 //再判断数据是否过期
-                // console.log(result);
-                // console.log(result.update_date);
-                if (!this.items && result && result.update_date && !dataRepository.checkDate(result.update_date)) {
+                if (result && result.update_date && !dataRepository.checkDate(result.update_date)) {
                     // ToastUtil.show('数据过期');
+                    console.log('数据过期');
                     this.setState({
                         isRefresh: true
                     });
                     return dataRepository.fetchNetRepository(url);
                 } else {
                     // ToastUtil.show('缓存数据');
+                    console.log('缓存');
                 }
             })
             .then(items => {

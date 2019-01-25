@@ -6,6 +6,11 @@
     "checked": true
   },
   {
+    "path": "unknown",
+    "name": "Unknown",
+    "checked": true
+  },
+  {
     "path": "as3",
     "name": "ActionScript",
     "short_name": "AS",
