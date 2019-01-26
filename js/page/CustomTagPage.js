@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Alert, ScrollView ,DeviceEventEmitter} from 'react-native';
+import { View, Text, StyleSheet, Alert, ScrollView, DeviceEventEmitter } from 'react-native';
 import { ThemeColor } from '../utils/Consts';
 import LanguageDao, { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
 import CheckBox from 'react-native-check-box';
 import ArrayUtil from '../utils/ArrayUtil';
 import IconFont from '../common/IconFont';
+import Loading from '../common/Loading';
 
 //自定义标签页面
 class CustomTagPage extends Component {
@@ -19,6 +20,7 @@ class CustomTagPage extends Component {
         this.originDataArray = [];
         this.state = {
             dataArray: [],
+            isLoaded: false,
         }
     }
     /**
@@ -44,9 +46,9 @@ class CustomTagPage extends Component {
         } else {
             await this.languageDao.save(this.state.dataArray);
         }
-        if(this.flag===FLAG_LANGUAGE.flag_key){
+        if (this.flag === FLAG_LANGUAGE.flag_key) {
             DeviceEventEmitter.emit('hot-tab-changed');
-        }else{
+        } else {
             DeviceEventEmitter.emit('trending-tab-changed');
         }
         this.props.navigation.pop();
@@ -113,6 +115,7 @@ class CustomTagPage extends Component {
                     })
                 }
                 this.setState({
+                    isLoaded: true,
                     dataArray: result,
                 });
             })
@@ -183,6 +186,7 @@ class CustomTagPage extends Component {
     }
 
     render() {
+        if (!this.state.isLoaded) return (<Loading />);
         return (
             <ScrollView>
                 <View style={{ padding: 10 }}>

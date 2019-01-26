@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableHighlight, Alert ,DeviceEventEmitter} from 'react-native';
+import { View, Text, StyleSheet, TouchableHighlight, Alert, DeviceEventEmitter } from 'react-native';
 import LanguageDao, { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
 import ArrayUtil from '../utils/ArrayUtil';
 import SortableListView from 'react-native-sortable-listview';
 import IconFont from '../common/IconFont';
 import { ThemeColor } from '../utils/Consts';
+import Loading from '../common/Loading';
 
 class SortKeyPage extends Component {
 
@@ -88,6 +89,7 @@ class SortKeyPage extends Component {
         this.sortResultArray = [];
         this.originalCheckedArray = [];
         this.state = {
+            isLoaded: false,
             dataArray: [],
         }
         console.log('constructor');
@@ -116,6 +118,7 @@ class SortKeyPage extends Component {
 
 
     render() {
+        if (!this.state.isLoaded) return <Loading />;
         return (
             <SortableListView
                 style={{ flex: 1 }}
@@ -141,6 +144,7 @@ class SortKeyPage extends Component {
             }
         }
         this.setState({
+            isLoaded: true,
             dataArray: checkedArray,
         });
         this.originalCheckedArray = ArrayUtil.clone(checkedArray);
