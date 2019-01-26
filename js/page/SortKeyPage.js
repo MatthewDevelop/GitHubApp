@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableHighlight, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableHighlight, Alert ,DeviceEventEmitter} from 'react-native';
 import LanguageDao, { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
 import ArrayUtil from '../utils/ArrayUtil';
 import SortableListView from 'react-native-sortable-listview';
@@ -8,13 +8,18 @@ import { ThemeColor } from '../utils/Consts';
 
 class SortKeyPage extends Component {
 
-    save = (checked = false) => {
+    save = async (checked = false) => {
         if (!checked && ArrayUtil.isEqual(this.originalCheckedArray, this.state.dataArray)) {
             this.props.navigation.pop();
             return;
         }
         this.getSortResult();
-        this.languageDao.save(this.sortResultArray);
+        await this.languageDao.save(this.sortResultArray);
+        if (this.flag === FLAG_LANGUAGE.flag_key) {
+            DeviceEventEmitter.emit('hot-tab-changed');
+        } else {
+            DeviceEventEmitter.emit('trending-tab-changed');
+        }
         this.props.navigation.pop();
     }
 

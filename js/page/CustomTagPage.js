@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Alert, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Alert, ScrollView ,DeviceEventEmitter} from 'react-native';
 import { ThemeColor } from '../utils/Consts';
 import LanguageDao, { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
 import CheckBox from 'react-native-check-box';
@@ -14,7 +14,6 @@ class CustomTagPage extends Component {
         this.navigation = this.props.navigation;
         this.isRemoveKey = this.navigation.getParam('isRemoveKey', false);
         this.flag = this.navigation.getParam('flag', FLAG_LANGUAGE.flag_key);
-        console.log(this.flag);
         this.languageDao = new LanguageDao(this.flag);
         this.changedValues = [];
         this.originDataArray = [];
@@ -25,7 +24,7 @@ class CustomTagPage extends Component {
     /**
      * 保存
      */
-    save = () => {
+    save = async () => {
         if (this.changedValues.length === 0) {
             this.props.navigation.pop();
             return;
@@ -41,12 +40,16 @@ class CustomTagPage extends Component {
                     };
                 }
             });
-            this.languageDao.save(this.originDataArray);
-            this.props.navigation.pop();
+            await this.languageDao.save(this.originDataArray);
         } else {
-            this.languageDao.save(this.state.dataArray);
-            this.props.navigation.pop();
+            await this.languageDao.save(this.state.dataArray);
         }
+        if(this.flag===FLAG_LANGUAGE.flag_key){
+            DeviceEventEmitter.emit('hot-tab-changed');
+        }else{
+            DeviceEventEmitter.emit('trending-tab-changed');
+        }
+        this.props.navigation.pop();
     }
     /**
      * 返回

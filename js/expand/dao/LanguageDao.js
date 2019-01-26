@@ -45,13 +45,13 @@ export default class LanguageDao {
      * @param {*} data 数据
      */
     save(data) {
-        AsyncStorage.setItem(this.flag, JSON.stringify(data), (error) => {
+        return AsyncStorage.setItem(this.flag, JSON.stringify(data), (error) => {
             if (error) {
                 ToastUtil.show('保存失败');
             } else {
                 // ToastUtil.show('保存成功');
                 // console.log('保存成功');
             }
-        })
+        });
     }
 }

@@ -29,7 +29,14 @@ class Hot extends Component {
     }
 
     componentDidMount() {
+        this.listener=DeviceEventEmitter.addListener('hot-tab-changed',()=>{
+            this.loadData();
+        })
         this.loadData();
+    }
+
+    componentWillUnmount(){
+        this.listener.remove();
     }
 
     loadData() {

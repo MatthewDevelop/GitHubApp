@@ -37,9 +37,15 @@ class Trending extends Component {
     }
 
     componentDidMount() {
+        this.listener = DeviceEventEmitter.addListener('trending-tab-changed', () => {
+            this.loadData();
+        });
         this.loadData();
     }
 
+    componentWillUnmount() {
+        this.listener.remove();
+    }
     loadData() {
         this.languageDao.fetch()
             .then(result => {
